@@ -37,6 +37,32 @@ private:
         Next(nullptr)
     { }
   };
+  
+  class iterator{
+  private:
+    NODE* Ptr;
+  
+  public:
+    iterator(NODE* ptr)// constructor:
+      : Ptr(ptr)
+    { } 
+    
+    bool operator==(iterator other)// for comparing to == end()
+    {
+      if(this->Ptr == other.Ptr)
+        return true;
+      else 
+        return false;
+    }
+    
+    pair<KeyT, ValueT>* operator->()// for accessing the <key, value>
+    {
+      if(this->Ptr == nullptr)
+        return nullptr;
+      else
+        return &(this->Ptr->KeyValuePair);
+    }
+  };
 
   //
   // data members:
@@ -73,6 +99,7 @@ public:
 
     // TODO: do this SECOND
     NODE* cur = Root;
+
     while (cur != nullptr)
     {
       if (cur->KeyValuePair.first == key)
@@ -81,6 +108,7 @@ public:
       }
       cur = cur->Next; //move onto next node
     }
+
 
 
     //
@@ -99,6 +127,28 @@ public:
 
     return newnode->KeyValuePair.second;
   }
+
+  iterator find(KeyT key)
+    {
+      NODE* cur = Root;
+      while (cur != nullptr)
+      {
+        if (cur->KeyValuePair.first == key)
+        {
+          return iterator(cur);
+        }
+
+        cur = cur->Next;
+      }
+      return end();
+    }
+  
+  iterator end()
+  {
+    return iterator(nullptr);
+  }
+  
+
 };
 
 //
@@ -131,7 +181,12 @@ int main() {
       cout << "# of animals: " << animals.size() << endl;
     }
     else {
-      cout << "I own " << animals[type] << " " << type << endl;
+
+      auto iter = animals.find(type);
+      if (iter == animals.end()) // not found
+        cout << "I don't own any " << type << endl;
+      else
+        cout << "I own " << iter->second << " " << type << endl;
     }
 
   }//while
